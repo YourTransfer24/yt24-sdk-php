@@ -1,31 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>YourTransfer24 PHP SDK</title>
-<style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; max-width: 900px; margin: auto; }
-    pre { background: #f4f4f4; padding: 12px; border-radius: 6px; overflow-x: auto; }
-    code { font-family: Consolas, monospace; }
-    h1, h2, h3 { color: #333; }
-</style>
-</head>
-
-<body>
-
 <h1>yt24-sdk-php</h1>
 
 <p>
-Official PHP SDK for the YourTransfer24 REST JSON API Platform.  
-Provides clean access to authentication, profile, bookings, availability, quotes, vehicles, companies, coverage, and logs.  
+Official PHP SDK for the YourTransfer24 REST JSON API Platform.
+Provides clean access to authentication, profile data, bookings, booking confirmation, booking status,
+availability checks, quotes, vehicles, companies, coverage, and logs.
 Fully aligned with the official YourTransfer24 API documentation.
 </p>
 
 <hr>
 
 <h2>Installation</h2>
-
-<p>Add the package using Composer:</p>
 
 <pre><code>composer require yourtransfer24/yt24-sdk-php
 </code></pre>
@@ -34,7 +18,8 @@ Fully aligned with the official YourTransfer24 API documentation.
 
 <h2>Initialization</h2>
 
-<pre><code>use YT24SDK\YT24Client;
+<pre><code>
+use YT24SDK\YT24Client;
 use YT24SDK\ProfileAPI;
 use YT24SDK\BookingsAPI;
 use YT24SDK\AvailabilityAPI;
@@ -46,15 +31,15 @@ use YT24SDK\LogsAPI;
 
 $client = new YT24Client("YOUR_API_KEY", "sandbox");
 
-// API Modules
-$profile     = new ProfileAPI($client);
-$bookings    = new BookingsAPI($client);
+// Instantiate endpoints
+$profile = new ProfileAPI($client);
+$bookings = new BookingsAPI($client);
 $availability = new AvailabilityAPI($client);
-$quote       = new QuoteAPI($client);
-$vehicles    = new VehiclesAPI($client);
-$companies   = new CompaniesAPI($client);
-$coverage    = new CoverageAPI($client);
-$logs        = new LogsAPI($client);
+$quote = new QuoteAPI($client);
+$vehicles = new VehiclesAPI($client);
+$companies = new CompaniesAPI($client);
+$coverage = new CoverageAPI($client);
+$logs = new LogsAPI($client);
 </code></pre>
 
 <hr>
@@ -63,8 +48,9 @@ $logs        = new LogsAPI($client);
 
 <h3>1. Profile</h3>
 
-<pre><code>// Get profile
-$profileData = $profile->getProfile();
+<pre><code>
+// Get profile
+$data = $profile->getProfile();
 
 // Update profile
 $profile->updateProfile([
@@ -75,24 +61,39 @@ $profile->updateProfile([
 
 <h3>2. Bookings</h3>
 
-<pre><code>// List bookings
+<h4>Create, Retrieve, List, Confirm, Update Status</h4>
+
+<pre><code>
+// List bookings
 $bookings->list();
 
 // With filters
 $bookings->list(["limit" => 20, "page" => 2]);
 
-// Get booking
+// Retrieve a booking
 $bookings->get(123);
 
-// Create booking
+// Create booking (Full Real Payload Example)
 $bookings->create([
-    "pickup_location"  => "Airport",
+    "pickup_location" => "Airport",
     "dropoff_location" => "Hotel",
-    "passengers"       => 3,
-    "date"             => "2025-01-10"
+    "date" => "2025-01-20",
+    "passengers" => 3,
+    "luggage" => 2,
+    "vehicle_type" => "Sedan",
+    "flight_number" => "AA123",
+    "arrival_time" => "14:30",
+    "child_seats" => 1,
+    "notes" => "Customer prefers front seat",
+    "customer" => [
+        "first_name" => "John",
+        "last_name" => "Doe",
+        "email" => "john@example.com",
+        "phone" => "+18095551234"
+    ]
 ]);
 
-// Confirm booking
+// Confirm a booking
 $bookings->confirm(123);
 
 // Update booking status
@@ -101,34 +102,38 @@ $bookings->updateStatus(123, ["status" => "confirmed"]);
 
 <h3>3. Availability</h3>
 
-<pre><code>$availability->check([
-    "pickup_location"  => "Airport",
+<pre><code>
+$availability->check([
+    "pickup_location" => "Airport",
     "dropoff_location" => "Hotel",
-    "date"             => "2025-01-20"
+    "date" => "2025-01-20"
 ]);
 </code></pre>
 
 <h3>4. Quote</h3>
 
-<pre><code>$quote->getQuote([
-    "pickup_location"  => "Airport",
+<pre><code>
+$quote->getQuote([
+    "pickup_location" => "Airport",
     "dropoff_location" => "Hotel",
-    "passengers"       => 2
+    "passengers" => 2
 ]);
 </code></pre>
 
 <h3>5. Vehicles</h3>
 
-<pre><code>// List vehicles
+<pre><code>
+// List vehicles
 $vehicles->list();
 
-// Get vehicle
+// Vehicle details
 $vehicles->get(5);
 </code></pre>
 
 <h3>6. Companies</h3>
 
-<pre><code>// Company list
+<pre><code>
+// Company list
 $companies->list();
 
 // Company details
@@ -137,13 +142,15 @@ $companies->get(12);
 
 <h3>7. Coverage</h3>
 
-<pre><code>// Coverage zones
+<pre><code>
+// Get operating zones and coverage areas
 $coverage->list();
 </code></pre>
 
 <h3>8. Logs</h3>
 
-<pre><code>// Logs with filters
+<pre><code>
+// Logs filtering example
 $logs->list(["booking_id" => 123]);
 </code></pre>
 
@@ -151,7 +158,7 @@ $logs->list(["booking_id" => 123]);
 
 <h2>Error Handling</h2>
 
-<p>YourTransfer24 API returns structured JSON errors:</p>
+<p>YourTransfer24 API returns strict structured JSON errors:</p>
 
 <pre><code>{
   "error": true,
@@ -166,16 +173,15 @@ $logs->list(["booking_id" => 123]);
 <pre><code>
 try {
     $bookings->create([]);
-} catch (\Exception $err) {
+} catch (Exception $err) {
     echo $err->status;   // HTTP status code
-    echo $err->err_key;  // YT24 error code
+    echo $err->err_key;  // API error code
     echo $err->getMessage(); // Error message
 }
 </code></pre>
 
 <p>
-The SDK returns errors exactly as provided by the YourTransfer24 API.  
-No internal transformation or wrapping is applied.
+The SDK does not modify, alter, wrap, or transform errors — they are returned exactly as provided by the YourTransfer24 API.
 </p>
 
 <hr>
@@ -184,10 +190,9 @@ No internal transformation or wrapping is applied.
 
 <pre><code>
 yt24-sdk-php/
-│── composer.json
 │── README.md
-│── README.html
 │── LICENSE
+│── composer.json
 └── src/
     ├── YT24Client.php
     ├── ProfileAPI.php
@@ -206,6 +211,4 @@ yt24-sdk-php/
 
 <p>MIT License © YourTransfer24</p>
 
-</body>
-</html>
 
