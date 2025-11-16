@@ -1,17 +1,46 @@
 {
-  "name": "yourtransfer24/yt24-sdk-php",
-  "description": "Official PHP SDK for the YourTransfer24 REST JSON API Platform",
-  "type": "library",
-  "version": "1.0.0",
-  "license": "MIT",
-  "autoload": {
-    "psr-4": {
-      "YT24SDK\\": "src/"
-    }
-  },
-  "require": {
-    "php": ">=7.4",
-    "ext-json": "*",
-    "guzzlehttp/guzzle": "^7.0"
-  }
+    "name": "yourtransfer24/yt24-sdk-php",
+    "description": "Official PHP SDK for the YourTransfer24 REST JSON API Platform.",
+    "type": "library",
+    "license": "MIT",
+    "version": "1.0.0",
+    "keywords": [
+        "yourtransfer24",
+        "transportation",
+        "api",
+        "sdk",
+        "rest",
+        "php-sdk",
+        "booking",
+        "travel"
+    ],
+    "homepage": "https://yourtransfer24.com",
+    
+    "authors": [
+        {
+            "name": "YourTransfer24 Developer Team",
+            "email": "api.support@yourtransfer24.com"
+        }
+    ],
+
+    "support": {
+        "email": "api.support@yourtransfer24.com",
+        "issues": "https://github.com/YourTransfer24/yt24-sdk-php/issues",
+        "source": "https://github.com/YourTransfer24/yt24-sdk-php"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "YT24SDK\\": "src/"
+        }
+    },
+
+    "require": {
+        "php": ">=7.4",
+        "ext-json": "^1.0",
+        "guzzlehttp/guzzle": "^7.0"
+    },
+
+    "minimum-stability": "stable",
+    "prefer-stable": true
 }
